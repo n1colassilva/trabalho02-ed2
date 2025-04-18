@@ -10,8 +10,7 @@ Este projeto implementa um algoritmo de compressão de arquivos baseado na técn
 Para compilar o programa, basta rodar o seguinte comando:
 
 ```bash
-gcc HuffmanCompleto.c -o huffman
-```
+gcc huffman.c main.c -o huffman.exe ```
 
 Isso gerará um executável chamado `huffman`.
 
@@ -20,16 +19,24 @@ Isso gerará um executável chamado `huffman`.
 Para rodar o programa, execute o comando:
 
 ```bash
-./huffman
+./huffman [OPÇÃO] [ARQUIVO]
 ```
 
-O programa irá compactar o arquivo de entrada, comparará os tamanhos antes e depois da compactação, e exibirá as informações no terminal. A funcionalidade de descompactação ainda não está implementada.
+
+Uso: huffman \[OPÇÃO] \[ARQUIVO]
+
+Utiliza o algoritmo de Huffman em um arquivo especificado.
+
+Opções:
+  ./huffman -c    Comprime um arquivo
+  ./huffman -d    Descomprime o arquivo, se válido
+  ./huffman -v    Visualiza um arquivo comprimido
+
+
 
 ## ⚠️ **Limitações e Testes**
 
-- **Descompactação**: A função de descompactação ainda precisa ser implementada. Neste momento, o programa é capaz apenas de compactar arquivos.
-  
-- **Arquivos suportados**: Por enquanto, o programa foi testado com arquivos de texto (`.txt`), como o exemplo "Teste.txt" incluído no repositório. No entanto, o algoritmo é projetado para funcionar com qualquer tipo de arquivo, incluindo imagens, PDFs, e outros formatos binários. Para uma análise mais completa, o código pode ser ajustado para trabalhar com arquivos como `.pdf`.
+- O programa assume que é um arquivo que usa o conjunto ASCII
 
 ## 🔧 **Como funciona**
 
@@ -39,8 +46,6 @@ O programa irá compactar o arquivo de entrada, comparará os tamanhos antes e d
 
 ## 🔄 **Próximos passos**
 
-- Implementação da função de descompactação.
-- Adaptação do código para suportar uma gama mais ampla de tipos de arquivos.
-- Testes adicionais com outros formatos (PDFs),.
-
+- [] Adicionar visualização de arquivo
+- [] Adicionar texto mostrando a diferença de tamanho
 
