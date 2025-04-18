@@ -19,8 +19,6 @@ int main(int argc, char *argv[]) {
   char *arquivo = argv[2];
 
   if (strcmp(flag, "-c") == 0) {
-    printf("Comprimindo arquivo: %s\n", arquivo);
-
     // Criar nome de saída com ".huff"
     char nome_saida[512];
     int written = snprintf(nome_saida, sizeof(nome_saida), "%s.huff", arquivo);
@@ -37,37 +35,13 @@ int main(int argc, char *argv[]) {
 
     printf("Arquivo comprimido com sucesso: %s\n", arquivo);
   } else if (strcmp(flag, "-d") == 0) {
-    printf("Descomprimindo arquivo: %s\n", arquivo);
-    // Descomprimir arquivo
-    FILE *entrada = fopen(arquivo, "rb");
-    if (!entrada) {
-      printf("Erro ao abrir o arquivo de entrada.\n");
-      return 1;
-    }
-
-    // Gerar nome de saída
-    char nome_saida[256];
-    snprintf(nome_saida, sizeof(nome_saida), "%s.dec", arquivo);
-
-    FILE *saida = fopen(nome_saida, "wb");
-    if (!saida) {
-      printf("Erro ao criar o arquivo de saída.\n");
-      fclose(entrada);
-      return 1;
-    }
-
-    if (descompactar_arquivo(entrada, saida)) {
+    // Usa a função com confirmação e exibição de tamanhos
+    if (descomprimir_com_confirmacao(arquivo) != 0) {
       printf("Erro ao descomprimir o arquivo.\n");
-      fclose(entrada);
-      fclose(saida);
       return 1;
     }
 
-    fclose(entrada);
-    fclose(saida);
-    printf("Arquivo descomprimido com sucesso: %s\n", nome_saida);
     return 0;
-
   } else {
     printf("Opção desconhecida %s\n", flag);
     return 1;

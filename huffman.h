@@ -153,5 +153,17 @@ int descompactar_arquivo(FILE* arquivo_entrada, FILE* arquivo_saida);
  */
 int comprimir_com_confirmação(char* nome_arquivo);
 
+/**
+ * @brief Descomprime um arquivo após confirmação do usuário.
+ *
+ * Essa função descomprime o arquivo especificado em um arquivo temporário,
+ * calcula o tamanho antes e depois, e solicita confirmação ao usuário antes
+ * de salvar a versão final descomprimida.
+ *
+ * @param nome_arquivo Caminho para o arquivo comprimido.
+ * @return int 0 em sucesso, 1 em caso de erro.
+ */
+int descomprimir_com_confirmacao(const char* nome_arquivo);
+
 #endif // HUFFMAN_H
 

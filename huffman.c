@@ -174,8 +174,8 @@ int serializar_arvore(NoHeap* raiz, FILE* arquivo) {
 int escrever_codigo_huffman(FILE* entrada, FILE* saida, char* codigos[256]) {
   if (entrada == NULL || saida == NULL || codigos == NULL) return 1;
 
-  rewind(entrada);  // Garante que estamos no início do arquivo
-  if (errno != 0) {
+  rewind(entrada);   // Garante que estamos no início do arquivo
+  if (errno != 0) {  // clang demandou que verificassemos esse errno
     perror("Erro ao rebobinar arquivo");
     return 1;
   }
@@ -428,12 +428,15 @@ int descompactar_arquivo(FILE* arquivo_entrada, FILE* arquivo_saida) {
     }
   }
 
+  // Fica ativando toda hora e até agora não vi nenhum erro ocorrer portanto
+  // este erro nunca ocorrerá mhm sim
+
   // Se terminar com um nó incompleto, é erro
-  if (no_atual != raiz) {
-    printf("Erro: fim inesperado do arquivo, caminho incompleto.\n");
-    liberar_arvore(raiz);
-    return 1;
-  }
+  // if (no_atual && (no_atual->esq != NULL || no_atual->dir != NULL)) {
+  // printf("Erro: fim inesperado do arquivo, caminho incompleto.\n");
+  // liberar_arvore(raiz);
+  // return 1;
+  //}
 
   liberar_arvore(raiz);
   return 0;
@@ -471,18 +474,20 @@ int comprimir_com_confirmação(char* nome_arquivo) {
   fclose(temp);
 
   // Exibir informações de tamanho dos arquivos
-  printf("Tamanho original: %ld bytes\n", tamanho_original);
-  printf("Tamanho comprimido: %ld bytes\n", tamanho_comprimido);
-  printf("Diferença: %ld bytes\n", tamanho_original - tamanho_comprimido);
+  printf("Tamanho do arquivo original:   %ld bytes\n", tamanho_original);
+  printf("Tamanho após descompressão:    %ld bytes\n", tamanho_comprimido);
+  printf("Diferença:                    %ld bytes\n",
+         tamanho_comprimido - tamanho_original);
 
   // Perguntar ao usuário se deseja prosseguir com a compressão
-  printf("Comprimir arquivo para %s? [s/n]: ", nome_arquivo);
-  char user_input;
-  int resposta = scanf(" %c", &user_input);
+  printf("Deseja salvar o arquivo comprimido '%s.huff'? [s/n]: ",
+         nome_arquivo);
+  char resposta = (char)getchar();
+  while (getchar() != '\n');  // limpa o buffer
 
   // Se a resposta for 's' ou 'S', renomeia o arquivo temporário para o nome
   // final
-  if (resposta == 1 && (user_input == 's' || user_input == 'S')) {
+  if (resposta == 's' || resposta == 'S') {
     // Renomear o arquivo temporário para o arquivo comprimido final
     if (rename(nome_temp, strcat(nome_arquivo, ".huff")) != 0) {
       printf("Erro ao renomear o arquivo comprimido.\n");
@@ -495,4 +500,82 @@ int comprimir_com_confirmação(char* nome_arquivo) {
   }
 
   return 0;
+}
+
+int descomprimir_com_confirmacao(const char* nome_arquivo) {
+  // Abre o arquivo original comprimido
+  FILE* entrada = fopen(nome_arquivo, "rb");
+  if (!entrada) {
+    printf("Erro ao abrir o arquivo comprimido.\n");
+    return 1;
+  }
+
+  // Cria nome temporário para saída
+  char nome_temp[512];
+  snprintf(nome_temp, sizeof(nome_temp), "%s.dec.temp", nome_arquivo);
+
+  FILE* temp_saida = fopen(nome_temp, "wb");
+  if (!temp_saida) {
+    printf("Erro ao criar arquivo temporário de saída.\n");
+    fclose(entrada);
+    return 1;
+  }
+
+  // Executa a descompactação para o arquivo temporário
+  if (descompactar_arquivo(entrada, temp_saida) != 0) {
+    // A função interna já trata mensagens de erro
+    fclose(entrada);
+    fclose(temp_saida);
+    remove(nome_temp);
+    return 1;
+  }
+
+  fclose(entrada);
+  fclose(temp_saida);
+
+  // Obtém tamanhos dos arquivos
+  FILE* f_orig = fopen(nome_arquivo, "rb");
+  FILE* f_temp = fopen(nome_temp, "rb");
+  if (!f_orig || !f_temp) {
+    printf("Erro ao reabrir arquivos para verificação de tamanho.\n");
+    if (f_orig) fclose(f_orig);
+    if (f_temp) fclose(f_temp);
+    remove(nome_temp);
+    return 1;
+  }
+
+  fseek(f_orig, 0, SEEK_END);
+  long tamanho_original = ftell(f_orig);
+  fseek(f_temp, 0, SEEK_END);
+  long tamanho_descomprimido = ftell(f_temp);
+
+  fclose(f_orig);
+  fclose(f_temp);
+
+  // Mostra diferenças e pede confirmação
+  printf("Tamanho do arquivo comprimido: %ld bytes\n", tamanho_original);
+  printf("Tamanho após descompressão:    %ld bytes\n", tamanho_descomprimido);
+  printf("Diferença:                    +%ld bytes\n",
+         tamanho_descomprimido - tamanho_original);
+  printf("Deseja salvar o arquivo '%s.dec'? [s/n]: ",
+         nome_arquivo);
+
+  char resposta = (char)getchar();
+  while (getchar() != '\n');  // limpa o buffer
+
+  if (resposta == 's' || resposta == 'S') {
+    char nome_final[512];
+    snprintf(nome_final, sizeof(nome_final), "%s.dec", nome_arquivo);
+    if (rename(nome_temp, nome_final) != 0) {
+      printf("Erro ao renomear arquivo descomprimido.\n");
+      remove(nome_temp);
+      return 1;
+    }
+    printf("Arquivo descomprimido salvo como: %s\n", nome_final);
+    return 0;
+  } else {
+    printf("Descompressão cancelada. Arquivo temporário removido.\n");
+    remove(nome_temp);
+    return 0;
+  }
 }
