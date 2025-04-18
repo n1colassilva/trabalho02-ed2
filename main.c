@@ -11,8 +11,7 @@ int main(int argc, char *argv[]) {
         "\n"
         "Opções:\n"
         "  ./huffman -c    Comprime um Arquivo\n"
-        "  ./huffman -d    Descomprime ARQUIVO caso seja válido\n"
-        "  ./huffman -v    Visualiza um ARQUIVO já comprimido\n\n");
+        "  ./huffman -d    Descomprime ARQUIVO caso seja válido\n\n");
     return 1;
   }
 
@@ -69,9 +68,6 @@ int main(int argc, char *argv[]) {
     printf("Arquivo descomprimido com sucesso: %s\n", nome_saida);
     return 0;
 
-  } else if (strcmp(flag, "-v") == 0) {
-    printf("visualizando arquivo: %s\n", arquivo);
-    // visualizar arquivo
   } else {
     printf("Opção desconhecida %s\n", flag);
     return 1;
