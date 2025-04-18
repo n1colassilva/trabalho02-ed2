@@ -137,5 +137,21 @@ int ler_bit(FILE *arquivo, int *byte_atual, int *bits_restantes);
  */
 int descompactar_arquivo(FILE* arquivo_entrada, FILE* arquivo_saida);
 
+/**
+ * @brief Comprime um arquivo e solicita confirmação ao usuário antes de realizar a operação final.
+ *
+ * Esta função comprime um arquivo para um arquivo temporário, calcula os tamanhos do arquivo original
+ * e do arquivo comprimido, e exibe essas informações ao usuário. Em seguida, pergunta ao usuário se deseja
+ * continuar com a compressão e renomear o arquivo temporário para o nome final com a extensão `.huff`.
+ *
+ * Se o usuário concordar, o arquivo temporário é renomeado para o arquivo comprimido final. Caso contrário,
+ * o arquivo temporário é removido e a operação é cancelada.
+ *
+ * @param nome_arquivo Nome do arquivo de entrada a ser comprimido.
+ *
+ * @return 0 em caso de sucesso, ou 1 se ocorrer algum erro durante a compressão ou a interação com o usuário.
+ */
+int comprimir_com_confirmação(char* nome_arquivo);
+
 #endif // HUFFMAN_H
 

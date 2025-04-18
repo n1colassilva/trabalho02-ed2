@@ -438,3 +438,61 @@ int descompactar_arquivo(FILE* arquivo_entrada, FILE* arquivo_saida) {
   liberar_arvore(raiz);
   return 0;
 }
+
+int comprimir_com_confirmação(char* nome_arquivo) {
+  // Nome do arquivo temporário (com extensão .temp)
+  char nome_temp[256];
+  snprintf(nome_temp, sizeof(nome_temp), "%s.temp", nome_arquivo);
+
+  // Comprimir o arquivo para o arquivo temporário
+  if (compactar_arquivo(nome_arquivo, nome_temp) != 0) {
+    printf("Erro ao comprimir o arquivo.\n");
+    return 1;
+  }
+
+  // Obter o tamanho do arquivo original
+  FILE* entrada = fopen(nome_arquivo, "rb");
+  if (!entrada) {
+    printf("Erro ao abrir o arquivo original.\n");
+    return 1;
+  }
+  fseek(entrada, 0, SEEK_END);
+  long tamanho_original = ftell(entrada);
+  fclose(entrada);
+
+  // Obter o tamanho do arquivo comprimido (temporário)
+  FILE* temp = fopen(nome_temp, "rb");
+  if (!temp) {
+    printf("Erro ao abrir o arquivo temporário.\n");
+    return 1;
+  }
+  fseek(temp, 0, SEEK_END);
+  long tamanho_comprimido = ftell(temp);
+  fclose(temp);
+
+  // Exibir informações de tamanho dos arquivos
+  printf("Tamanho original: %ld bytes\n", tamanho_original);
+  printf("Tamanho comprimido: %ld bytes\n", tamanho_comprimido);
+  printf("Diferença: %ld bytes\n", tamanho_original - tamanho_comprimido);
+
+  // Perguntar ao usuário se deseja prosseguir com a compressão
+  printf("Comprimir arquivo para %s? [s/n]: ", nome_arquivo);
+  char user_input;
+  int resposta = scanf(" %c", &user_input);
+
+  // Se a resposta for 's' ou 'S', renomeia o arquivo temporário para o nome
+  // final
+  if (resposta == 1 && (user_input == 's' || user_input == 'S')) {
+    // Renomear o arquivo temporário para o arquivo comprimido final
+    if (rename(nome_temp, strcat(nome_arquivo, ".huff")) != 0) {
+      printf("Erro ao renomear o arquivo comprimido.\n");
+      return 1;
+    }
+  } else {
+    // Se o usuário cancelar, exclui o arquivo temporário
+    remove(nome_temp);
+    printf("Operação de compressão cancelada.\n");
+  }
+
+  return 0;
+}

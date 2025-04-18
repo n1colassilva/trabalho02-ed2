@@ -30,13 +30,13 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    // Chamar a função de compactação
-    if (compactar_arquivo(arquivo, nome_saida) != 0) {
-      printf("Erro ao compactar o arquivo.\n");
+    // Perguntar ao usuário se deseja comprimir com confirmação
+    if (comprimir_com_confirmação(arquivo) != 0) {
+      printf("Erro ao comprimir o arquivo.\n");
       return 1;
     }
 
-    printf("Arquivo comprimido com sucesso: %s\n", nome_saida);
+    printf("Arquivo comprimido com sucesso: %s\n", arquivo);
   } else if (strcmp(flag, "-d") == 0) {
     printf("Descomprimindo arquivo: %s\n", arquivo);
     // Descomprimir arquivo
@@ -46,10 +46,9 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    // Generate output filename (remove .huff extension maybe?)
+    // Gerar nome de saída
     char nome_saida[256];
-    snprintf(nome_saida, sizeof(nome_saida), "%s.dec",
-             arquivo);  // or smarter suffix remover
+    snprintf(nome_saida, sizeof(nome_saida), "%s.dec", arquivo);
 
     FILE *saida = fopen(nome_saida, "wb");
     if (!saida) {
