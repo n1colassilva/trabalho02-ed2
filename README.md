@@ -1,51 +1,67 @@
 
+# Compactação e Descompactação usando Huffman
 
+Este projeto implementa um algoritmo de compressão de arquivos baseado na
+técnica de **[Códigos de Huffman](https://pt.wikipedia.org/wiki/Codifica%C3%A7%C3%A3o_de_Huffman)**. O código foi desenvolvido em C e permite a
+compactação de arquivos.
 
-# **Compactação e Descompactação usando Huffman**
-
-Este projeto implementa um algoritmo de compressão de arquivos baseado na técnica de **Códigos de Huffman**. O código foi desenvolvido em C e permite a compactação de arquivos, porém a descompactação ainda não foi implementada.
-
-## 🛠 **Compilação**
+##  Compilação
 
 Para compilar o programa, basta rodar o seguinte comando:
 
 ```bash
-gcc huffman.c main.c -o huffman.exe ```
 
-Isso gerará um executável chamado `huffman`.
+gcc huffman.c main.c -o huffman.exe 
+```
 
-## 🚀 **Execução**
+Isso gerará um executável chamado `huffman.exe`.
 
-Para rodar o programa, execute o comando:
+## Execução
+
+Para executar o programa, execute o comando:
 
 ```bash
-./huffman [OPÇÃO] [ARQUIVO]
+
+./huffman
 ```
 
 
-Uso: huffman \[OPÇÃO] \[ARQUIVO]
+> Uso: huffman \[OPÇÃO] \[ARQUIVO]
+> 
+> Utiliza o algoritmo de Huffman em um arquivo especificado.
+> 
+> Opções: 
+>   ./huffman -c    Comprime um arquivo
+>   ./huffman -d    Descomprime o arquivo, se válido
 
-Utiliza o algoritmo de Huffman em um arquivo especificado.
+Por exemplo:
 
-Opções:
-  ./huffman -c    Comprime um arquivo
-  ./huffman -d    Descomprime o arquivo, se válido
-  ./huffman -v    Visualiza um arquivo comprimido
+```bash
+./huffman -c textos/epico_de_gilgamesh.txt
+./huffman -d textos/epico_de_gilgamesh.txt.huff
+
+```
 
 
+## Limitações e Testes
 
-## ⚠️ **Limitações e Testes**
+- O programa assume que o arquivo manipulado usa o conjunto ASCII
+- Devido aos acentos possuirá problemas de UI em alguns terminais/sistemas
+operacionais (windows)
 
-- O programa assume que é um arquivo que usa o conjunto ASCII
+## Como funciona
 
-## 🔧 **Como funciona**
+### Compressão
 
-1. O programa lê o arquivo de entrada e gera uma árvore de Huffman.
-2. Em seguida, compacta o arquivo utilizando essa árvore, gerando um arquivo de saída com a versão compactada.
-3. Os tamanhos do arquivo original e do arquivo compactado são comparados e exibidos no terminal.
+1. O programa lê o arquivo de entrada e gera um heap mínimo.
+2. Usando o heap monta uma árvore de Huffman
+3. É montado um arquivo temporário já comprimido, o usuário é mostrado a comparação dos tamanhos
+4. O usuario pode concordar e ter o arquivo salvo de forma permanente ou negar e
+   ter o arquivo temporário excluído
 
-## 🔄 **Próximos passos**
-
-- [] Adicionar visualização de arquivo
-- [] Adicionar texto mostrando a diferença de tamanho
-
+### Descompressão
+1. O programa inicialmente reconstrói a árvore de huffman armazenada no início
+   do arquivo
+2. Usando esta árvore analiza os bits e reconstrói o texto original
+3. Um arquivo temporário armazena o texto, se o usuário concordar o arquivo se
+   torna permanente, se negar ele é excluído
