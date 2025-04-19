@@ -475,7 +475,7 @@ int comprimir_com_confirmação(char* nome_arquivo) {
 
   // Exibir informações de tamanho dos arquivos
   printf("Tamanho do arquivo original:   %ld bytes\n", tamanho_original);
-  printf("Tamanho após descompressão:    %ld bytes\n", tamanho_comprimido);
+  printf("Tamanho após compressão:    %ld bytes\n", tamanho_comprimido);
   printf("Diferença:                    %ld bytes\n",
          tamanho_comprimido - tamanho_original);
 
